@@ -1,0 +1,173 @@
+/Situación Problema 
+
+/Primero se introduce un número y se guarda en x 
+/y en el xmin de cada sensor para obtener un valor inicial
+/Se le resta 100(16), si sale negativo se va al Loop para un nuevo valor, si sale positivo se va para el sensor 1 llamado sensorA
+input
+store x
+store xminA
+store xminB
+subt cien
+skipcond 800
+jump loop
+jump sensorA
+
+/El bucle Loop inicia ingresando un número que se guarda en x 
+/Se le resta 100(16), si es negativo se repite el ciclo,si es positivo se va al sensor 1
+loop,input
+store x
+subt cien
+skipcond 800
+jump loop
+jump sensorA
+
+/Bucle del sensor 1 llamado sensorA
+/a X se le resta 200(16), si es positivo se manda al sensor 2, si es negativo continua en el sensor 1 
+/Se carga el contador y si es positivo se le resta 1, si no se manda al Fin
+/Se guarda x en la dirección almacenada en Y
+/Se le resta 100(16) a X para obtener el minimo y máximo, se guarda en xmA
+/Se resta entre xmA y xmin, si es negativo se guarda en el minimo y se repite el bucle loop
+/de lo contrario se va al maximoA
+sensorA,load x
+subt doscien
+skipcond 000
+jump sensorB 
+load counterA
+skipcond 800
+jump fin
+subt one
+store counterA
+Load x
+storei Y
+load Y
+add one
+store Y
+Load x
+subt cien
+store xmA
+subt xminA
+skipcond 000
+jump maximoA
+load xmA
+store xminA
+jump loop
+
+/Bucle maximoA, se compueba con una resta que el valor sea el máximo,de lo contrario se regresa al loop
+/se guarda la variable xmA en el maximo y regresamos al loop
+maximoA,  load xmA
+subt xmaxA
+skipcond 800
+jump loop
+load xmA
+store xmaxA
+jump loop
+
+/Con este bucle se saca la mediana del sensor 1
+/Al minimo se le suma uno y al maximo se le resta uno
+/Se le resta el minimo al maximo y si sale positivo se repite el bucle, si no se cambia a la mediana del sensor 2
+medianA, Load xminA
+add one
+store xminA
+load xmaxA
+subt one
+store xmaxA
+subt xminA
+skipcond 000
+jump medianA
+jump medianB
+
+/Bucle del sensor 2 llamado sensorB
+/a X se le resta 300(16), si es positivo se regresa al loop, si es negativo continua en el sensor 2 
+/Se carga el contador y si es positivo se le resta 1, si no se manda al Fin
+/Se guarda x en la dirección almacenada en Z
+/Se le resta 200(16) a X para obtener el minimo y máximo, se guarda en xmB
+/Se resta entre xmB y xmin, si es negativo se guarda en el minimo y se repite el bucle loop
+/de lo contrario se va al maximoB
+sensorB,load x
+Subt trescien
+skipcond 000
+jump loop 
+load counterB
+skipcond 800
+jump fin
+subt one
+store counterB
+Load x 
+storei Z
+load Z
+add one
+store Z
+Load x
+subt doscien
+store xmB
+subt xminB
+skipcond 000
+jump maximoB
+load xmB
+store xminB
+jump loop
+
+/Bucle maximoB, se compueba con una resta que el valor sea el máximo,de lo contrario se regresa al loop
+/se guarda la variable xmA en el maximo y regresamos al loop
+maximoB,  load xmB
+subt xmaxB
+skipcond 800
+jump loop
+load xmB
+store xmaxB
+jump loop
+
+/Con este bucle se saca la mediana del sensor 2
+/Al minimo se le suma uno y al maximo se le resta uno
+/Se le resta el minimo al maximo y si sale positivo se repite el bucle, si no se salta al bucle out
+medianB, Load xminB
+add one
+store xminB
+load xmaxB
+subt one
+store xmaxB
+subt xminB
+skipcond 000
+jump medianB
+jump out
+
+/En el bucle fin se comparan los contadores de ambos sensores con una resta
+/Si la resta es 0 entonces se va a la mediana del sensor 1, si no se regresa al loop
+fin, Load counterA
+subt counterB
+Skipcond 400
+Jump loop
+Jump medianA
+
+/Bucle out, Para imprimir las mediana, se imprime el numero del sensor y su respectiva mediana
+/Cuneta con un halt para acabar el programa
+out, Load one 
+Output
+Load xmaxA
+add one
+Output
+Load two
+Output
+Load xmaxB
+add one
+Output
+
+halt
+
+/Variables 
+counterA, DEC 100
+counterB, DEC 100
+one, DEC 1
+two, DEC 2 
+x, DEC 0
+xmA, DEC 0
+xmB, DEC 0
+xminA, DEC 0
+xmaxA, DEC 0 
+xminB, DEC 0
+xmaxB, DEC 0 
+Y, HEX A00
+Z, HEX B00
+cien, HEX 100
+doscien, HEX 200
+trescien, HEX 300
